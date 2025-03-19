@@ -84,6 +84,14 @@ struct CompoundSavingsView: View {
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
+            .onChange(of: calculationType) { _ in
+                principalAmount = ""
+                periodsPerYear = ""
+                years = ""
+                futureValue = ""
+                result = nil
+                interestRate = ""
+            }
             
             TextField("Principal Amount", text: $principalAmount)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -176,7 +184,7 @@ struct SavingsView: View {
     @State private var rate: String = ""       // r (%)
     @State private var compounds: String = ""  // CpY
     @State private var years: String = ""      // t
-    @State private var future: String = ""     // FV
+    @State private var futureValue: String = ""     // FV
     @State private var result: Double? = nil
     @State private var calcType = "Future Value"
     
@@ -189,6 +197,15 @@ struct SavingsView: View {
                 ForEach(userOptions, id: \.self, content: Text.init)
             }
             .pickerStyle(.segmented)
+            .onChange(of: calcType) { _ in
+                // To reset the text field when an option is selected
+                principal = ""
+                payment = ""
+                rate = ""
+                compounds = ""
+                result = nil
+                futureValue = ""
+            }
             
             Group {
                 TextField("Principal", text: $principal)
@@ -199,7 +216,7 @@ struct SavingsView: View {
                 TextField("Compounds per Year", text: $compounds)
                 TextField("Years", text: $years)
                     .disabled(calcType == "Years")
-                TextField("Future Value", text: $future)
+                TextField("Future Value", text: $futureValue)
                     .disabled(calcType == "Future Value")
             }
             .textFieldStyle(.roundedBorder)
@@ -228,7 +245,7 @@ struct SavingsView: View {
         let r = Double(rate) ?? 0
         let CpY = Double(compounds) ?? 0
         let t = Double(years) ?? 0
-        let FV = Double(future) ?? 0
+        let FV = Double(futureValue) ?? 0
         
         switch calcType {
         case "Future Value":
