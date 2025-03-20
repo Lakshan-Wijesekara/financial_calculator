@@ -64,7 +64,7 @@ struct ContentView: View {
     }
 }
 
-// Separate class to handle the logic for Compound Savings Model
+// Separate view to handle the logic for Compound Savings Model
 struct CompoundSavingsView: View {
     @State private var principalAmount: String = "" // Present Value (P)
     @State private var periodsPerYear: String = "" // CpY
@@ -78,6 +78,12 @@ struct CompoundSavingsView: View {
     
     var body: some View {
         VStack {
+            Text("Compound Interest Savings")
+                .font(.system(size: 28, weight: .semibold, design: .rounded))
+                .foregroundColor(.black)
+                .padding(.top, 30)
+                .padding(.bottom, 50)
+            
             Picker("Calculate", selection: $calculationType) {
                 ForEach(calculationOptions, id: \.self) { option in
                     Text(option)
@@ -119,12 +125,13 @@ struct CompoundSavingsView: View {
             .padding()
             
             if let result = result {
-                Text("\(calculationType): \(String(format: "%.2f", result))" + (calculationType == "Interest Rate" ? "%" : ""))
+                Text("\(calculationType): \(String(format: "%.2f", result))")
                     .font(.headline)
             } else {
                 Text("Please enter valid inputs")
                     .foregroundColor(.red)
             }
+            Spacer()
         }
     }
     
@@ -170,14 +177,14 @@ struct CompoundSavingsView: View {
             return
         }
         
-        // Ensure result is valid
+        // Ensure result is valid, is a number or not negative if invalid setting it to nil
         if let res = result, !res.isFinite || res < 0 {
             result = nil
         }
     }
 }
 
-// Separate class to handle the logic for Savings Model
+// Separate view to handle the logic for Savings Model
 struct SavingsView: View {
     @State private var principal: String = ""   // P
     @State private var payment: String = ""    // PMT
@@ -193,6 +200,13 @@ struct SavingsView: View {
     
     var body: some View {
         VStack(spacing: 10) {
+            Text("Savings Calculator (Regular Contributions)")
+                .font(.system(size: 28, weight: .semibold, design: .rounded))
+                .foregroundColor(.black)
+                .padding(.top, 30)
+                .padding(.bottom, 50)
+                .multilineTextAlignment(.center)
+            
             Picker("Calculate", selection: $calcType) {
                 ForEach(userOptions, id: \.self, content: Text.init)
             }
@@ -221,7 +235,6 @@ struct SavingsView: View {
             }
             .textFieldStyle(.roundedBorder)
             .keyboardType(.decimalPad)
-            .submitLabel(.done) // Adds a "Done" key to dismiss keyboard
             
             Button("Calculate", action: calculate)
                 .padding(.top)
@@ -235,6 +248,7 @@ struct SavingsView: View {
             }
         }
         .padding()
+        Spacer()
     }
     
     private func calculate() {
@@ -281,6 +295,7 @@ struct SavingsView: View {
             return
         }
         
+        // Ensure a valid result
         if let res = result, !res.isFinite || res < 0 { result = nil }
     }
 }
@@ -292,7 +307,7 @@ struct LoansView: View {
     @State private var rate: String = ""        // r (%)
     @State private var payments: String = ""    // n (total payments)
     @State private var result: Double? = nil
-    @State private var calcType = "Payment"     // Default
+    @State private var calcType = "Payment"     // Default case
     @State private var errorMessage: String? = nil
     
     // Ignored Interest Rate calculation here since the calculation is complex considering the formula
@@ -300,6 +315,13 @@ struct LoansView: View {
     
     var body: some View {
         VStack(spacing: 10) {
+            Text("Loan Calculator (Compound interest & Regular payments)")
+                .font(.system(size: 28, weight: .semibold, design: .rounded))
+                .foregroundColor(.black)
+                .padding(.top, 30)
+                .padding(.bottom, 50)
+                .multilineTextAlignment(.center)
+            
             Picker("Calculate", selection: $calcType) {
                 ForEach(userOptions, id: \.self, content: Text.init)
             }
@@ -340,6 +362,7 @@ struct LoansView: View {
             }
         }
         .padding()
+        Spacer()
     }
     
     private func calculate() {
@@ -390,7 +413,7 @@ struct LoansView: View {
     }
 }
     
-    // Separate class to handle the logic for Mortgage Model
+// Separate view to handle the logic for Mortgage Model
 struct MortgageView: View {
     @State private var principal: String = ""    // P
     @State private var payment: String = ""     // PMT
@@ -404,6 +427,13 @@ struct MortgageView: View {
     
     var body: some View {
         VStack(spacing: 10) {
+            Text("Mortgage Calculator")
+                .font(.system(size: 28, weight: .semibold, design: .rounded))
+                .foregroundColor(.black)
+                .padding(.top, 30)
+                .padding(.bottom, 50)
+                .multilineTextAlignment(.center)
+            
             Picker("Calculate", selection: $calcType) {
                 ForEach(options, id: \.self, content: Text.init)
             }
@@ -429,7 +459,6 @@ struct MortgageView: View {
             }
             .textFieldStyle(.roundedBorder)
             .keyboardType(.decimalPad)
-            .submitLabel(.done)
             
             Button("Calculate", action: calculate)
                 .padding(.top)
@@ -445,6 +474,7 @@ struct MortgageView: View {
             }
         }
         .padding()
+        Spacer()
     }
     
     private func calculate() {
@@ -455,7 +485,7 @@ struct MortgageView: View {
         let PMT = Double(payment) ?? 0
         let r = Double(rate) ?? 0
         let n = Double(payments) ?? 0
-        let CpY = 12.0 // Monthly compounding
+        let CpY = 12.0 // Monthly compounding frequency
         
         switch calcType {
         case "Payment": // PMT
@@ -495,7 +525,7 @@ struct MortgageView: View {
     }
 }
 
-// Separate class to handle the logic for Compound Savings Model
+// Separate view to handle the Help Centre view
 struct HelpView: View {
     // Static array of help points
     private let helpPoints = [
@@ -520,7 +550,7 @@ struct HelpView: View {
             VStack(alignment: .leading, spacing: 15) {
                 ForEach(helpPoints, id: \.self) { point in
                     HStack(alignment: .firstTextBaseline) {
-                        //Use firstTextBaseline to keep the bullets at the start of a sentence
+                        // Use firstTextBaseline to keep the bullets at the start of a sentence
                         Text("•") // For Using a bullet point
                             .font(.system(size: 20))
                         Text(point)
